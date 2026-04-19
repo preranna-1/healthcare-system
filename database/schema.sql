@@ -178,3 +178,42 @@ CREATE TABLE ADMISSION_HISTORY (
 ) ENGINE=InnoDB;
 
 
+--maymuna's code
+
+-- Create Bed table
+CREATE TABLE Bed (
+    BedID INT PRIMARY KEY,
+    CenterID INT,
+    BedType VARCHAR(50),
+    BedName VARCHAR(50),
+    IsAvailable BOOLEAN,
+    LastUpdate DATETIME);
+
+CREATE TABLE Feedback (
+    FeedbackID INT PRIMARY KEY,\
+    PatientID INT,
+    CenterID INT,
+    DoctorID INT,
+    HospitalRating INT,
+    DoctorRating INT,
+    EquipmentRating INT,
+    SubmittedAt DATETIME,
+    Comments TEXT,
+    FOREIGN KEY (CenterID) REFERENCES Healthcare_Center(CenterID),
+    FOREIGN KEY (DoctorID) REFERENCES doctor(DoctorID),
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
+
+    
+);
+
+CREATE TABLE Alert (
+    AlertID INT PRIMARY KEY,
+    CenterID INT,
+    AlertType VARCHAR(50),
+    Severity VARCHAR(20),
+    Message TEXT,
+    CreatedAt DATETIME,
+    ResolvedAt DATETIME,
+    FOREIGN KEY (CenterID) REFERENCES Healthcare_Center(CenterID)
+);
+
