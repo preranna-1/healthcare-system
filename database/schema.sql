@@ -71,7 +71,31 @@ CREATE TABLE HOSPITAL (
 ALTER TABLE CENTERDISEASE_CATEGORY
 ADD CONSTRAINT FK_CDC_Disease FOREIGN KEY (DCID) REFERENCES DISEASE_CATEGORY(DCID);
 
+-- Create DOCTOR table
+CREATE TABLE DOCTOR (
+    DoctorID VARCHAR(50) PRIMARY KEY,
+    CenterID VARCHAR(50),
+    Name VARCHAR(100),
+    Specialization VARCHAR(100),
+    Qualification VARCHAR(200),
+    YearsOfExperience INT,
+    OverallRating DECIMAL(3, 2),
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
+);
 
+-- Create AMBULANCE table
+CREATE TABLE AMBULANCE (
+    AmbulanceID VARCHAR(50) PRIMARY KEY,
+    CenterID VARCHAR(50),
+    RegistrationNumber VARCHAR(50),
+    DriverName VARCHAR(100),
+    DriverPhone VARCHAR(50),
+    Type VARCHAR(50), -- Basic, ICU, Cardiac
+    IsAvailable BOOLEAN,
+    CurrentLatitude DECIMAL(10, 8),
+    CurrentLongitude DECIMAL(11, 8),
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
+);
 
 
 
