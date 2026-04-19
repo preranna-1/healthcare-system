@@ -98,6 +98,83 @@ CREATE TABLE AMBULANCE (
 );
 
 
+CREATE DATABASE IF NOT EXISTS hospital_db;
+USE hospital_db;
 
+-- ================= PROFILES =================
+CREATE TABLE PROFILE (
+    ProfileID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Street VARCHAR(100),
+    City VARCHAR(50),
+    PostalCode VARCHAR(20),
+    Phone VARCHAR(20),
+    Email VARCHAR(100),
+    PasswordHash VARCHAR(255),
+    Role VARCHAR(20)
+) ENGINE=InnoDB;
+
+-- ================= PATIENT =================
+CREATE TABLE PATIENT (
+    PatientID INT PRIMARY KEY,
+    UserID INT,
+    DOB DATE,
+    Gender VARCHAR(10),
+    BloodGroup VARCHAR(5),
+    DiseaseType VARCHAR(50),
+    FOREIGN KEY (UserID) REFERENCES PROFILE(ProfileID)
+) ENGINE=InnoDB;
+
+-- ================= EMERGENCY CONTACT =================
+CREATE TABLE EMERGENCY_CONTACT (
+    ContactID INT PRIMARY KEY,
+    UserID INT,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Phone VARCHAR(20),
+    FOREIGN KEY (UserID) REFERENCES PROFILE(ProfileID)
+) ENGINE=InnoDB;
+
+-- ================= DATA MANAGER =================
+CREATE TABLE DATA_MANAGER (
+    ManagerID INT PRIMARY KEY,
+    UserID INT,
+    CenterID INT,
+    FOREIGN KEY (UserID) REFERENCES PROFILE(ProfileID)
+) ENGINE=InnoDB;
+
+-- ================= PATIENT CONTACT LINK (M:N) =================
+CREATE TABLE PATIENT_CONTACT_LINK (
+    PatientID INT,
+    ContactID INT,
+    RelationToPatient VARCHAR(50),
+    PRIMARY KEY (PatientID, ContactID),
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID),
+    FOREIGN KEY (ContactID) REFERENCES EMERGENCY_CONTACT(ContactID)
+) ENGINE=InnoDB;
+
+-- ================= PATIENT RECORD =================
+CREATE TABLE PATIENT_RECORD (
+    RecordID INT PRIMARY KEY,
+    PatientID INT,
+    DiagnosisNotes TEXT,
+    TreatmentDetails TEXT,
+    RecordDate DATE,
+    DoctorID INT,
+    CenterID INT,
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
+) ENGINE=InnoDB;
+
+-- ================= ADMISSION HISTORY =================
+CREATE TABLE ADMISSION_HISTORY (
+    RecordID INT PRIMARY KEY,
+    PatientID INT,
+    AdmissionDate DATE,
+    DischargeDate DATE,
+    Outcome VARCHAR(50),
+    CenterID INT,
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
+) ENGINE=InnoDB;
 
 
