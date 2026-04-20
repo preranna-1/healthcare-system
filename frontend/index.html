@@ -1,1 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hospital System</title>
+</head>
+<body>
+  <h1>Healthcare Centers</h1>
+  <ul id="centers"></ul>
 
+  <script>
+    fetch("http://localhost:8000/api/healthcare_centers.php")
+      .then(response => response.json())
+      .then(data => {
+        let list = document.getElementById("centers");
+        data.forEach(center => {
+          let li = document.createElement("li");
+          li.textContent = center.Name + " - " + center.Address;
+          list.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
