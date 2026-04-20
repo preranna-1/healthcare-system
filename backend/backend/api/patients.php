@@ -1,31 +1,36 @@
 <?php
-require_once '../db_connect.php';
+include 'db.php';
 
-header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST');
-
-$method = $_SERVER['REQUEST_METHOD'];
-
-if ($method === 'GET') {
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $sql = "SELECT * FROM PATIENT";
     $result = $conn->query($sql);
-    $patients = [];
+
+    $data = [];
     while ($row = $result->fetch_assoc()) {
-        $patients[] = $row;
+        $data[] = $row;
     }
-    echo json_encode($patients);
+
+    header('Content-Type: application/json');
+    echo json_encode($data);
 }
-elseif ($method === 'POST') {
-    $data = json_decode(file_get_contents('php://input'), true);
-    
-    $sql = "INSERT INTO PATIENT (PatientID, UserID, DOB, Gender, BloodGroup, DiseaseType) 
-            VALUES ('{$data['PatientID']}', '{$data['UserID']}', '{$data['DOB']}', '{$data['Gender']}', '{$data['BloodGroup']}', '{$data['DiseaseType']}')";
-    
-    if ($conn->query($sql)) {
-        echo json_encode(['success' => true, 'message' => 'Patient created']);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $input = json_decode(file_get_contents("php://input"), true);
+
+    $PatientID = $input['PatientID'];
+    $UserID = $input['UserID'];
+    $DOB = $input['DOB'];
+    $Gender = $input['Gender'];
+    $BloodGroup = $input['BloodGroup'];
+    $DiseaseType = $input['DiseaseType'];
+
+    $stmt = $conn->prepare("INSERT INTO PATIENT (PatientID, UserID, DOB, Gender, BloodGroup, DiseaseType) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("iissss", $PatientID, $UserID, $DOB, $Gender, $BloodGroup, $DiseaseType);
+
+    if ($stmt->execute()) {
+        echo json_encode(["message" => "Patient added successfully"]);
     } else {
-        echo json_encode(['success' => false, 'error' => $conn->error]);
+        echo json_encode(["error" => $stmt->error]);
     }
 }
 ?>
