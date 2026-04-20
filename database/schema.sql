@@ -232,3 +232,54 @@ CREATE TABLE Booking (
     FOREIGN KEY (CenterID) REFERENCES HealthCenter(CenterID),
     FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID)
 );
+
+
+CREATE TABLE Appointment (
+    BookingID INT PRIMARY KEY,
+    AppointmentDate DATE,
+    TimeSlot VARCHAR(50),
+
+    FOREIGN KEY (BookingID) REFERENCES Booking(BookingID)
+);
+
+
+CREATE TABLE Admission (
+    BookingID INT PRIMARY KEY,
+    BedID INT,
+    AdmissionDate DATE,
+    ExpectedStay INT,
+
+    FOREIGN KEY (BookingID) REFERENCES Booking(BookingID),
+    FOREIGN KEY (BedID) REFERENCES Bed(BedID)
+);
+
+CREATE TABLE Ambulance_Request (
+    RequestID INT PRIMARY KEY,
+    PatientID INT,
+    AmbulanceID INT,
+    PickupLocation VARCHAR(255),
+    RequestTime DATETIME,
+    ArrivedAt DATETIME,
+    Status VARCHAR(50),
+
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (AmbulanceID) REFERENCES Ambulance(AmbulanceID)
+);
+
+CREATE TABLE Feedback (
+    FeedbackID INT PRIMARY KEY,
+    BookingID INT,
+    PatientID INT,
+    CenterID INT,
+    DoctorID INT,
+    HospitalRating INT,
+    DoctorRating INT,
+    EquipmentRating INT,
+    SubmittedAt DATETIME,
+    Comments TEXT,
+
+    FOREIGN KEY (BookingID) REFERENCES Booking(BookingID),
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (CenterID) REFERENCES HealthCenter(CenterID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID)
+);
