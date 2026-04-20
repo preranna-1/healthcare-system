@@ -217,3 +217,18 @@ CREATE TABLE Alert (
     FOREIGN KEY (CenterID) REFERENCES Healthcare_Center(CenterID)
 );
 
+
+CREATE TABLE Booking (
+    BookingID INT PRIMARY KEY,
+    PatientID INT,
+    CenterID INT,
+    DoctorID INT,
+    BookingStatus VARCHAR(50),
+    BookingDate DATETIME,
+    IsEmergency BOOLEAN,
+    BookingType VARCHAR(50),
+
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (CenterID) REFERENCES HealthCenter(CenterID),
+    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID)
+);
