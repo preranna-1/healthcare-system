@@ -199,7 +199,7 @@ CREATE TABLE Feedback (
     EquipmentRating INT,
     SubmittedAt DATETIME,
     Comments TEXT,
-    FOREIGN KEY (CenterID) REFERENCES Healthcare_Center(CenterID),
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID),
     FOREIGN KEY (DoctorID) REFERENCES doctor(DoctorID),
     FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
 
@@ -214,7 +214,7 @@ CREATE TABLE Alert (
     Message TEXT,
     CreatedAt DATETIME,
     ResolvedAt DATETIME,
-    FOREIGN KEY (CenterID) REFERENCES Healthcare_Center(CenterID)
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 );
 
 
@@ -229,7 +229,7 @@ CREATE TABLE Booking (
     BookingType VARCHAR(50),
 
     FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
-    FOREIGN KEY (CenterID) REFERENCES HealthCenter(CenterID),
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID),
     FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID)
 );
 
@@ -280,6 +280,6 @@ CREATE TABLE Feedback (
 
     FOREIGN KEY (BookingID) REFERENCES Booking(BookingID),
     FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
-    FOREIGN KEY (CenterID) REFERENCES HealthCenter(CenterID),
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID),
     FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID)
 );
