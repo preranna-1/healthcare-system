@@ -1,12 +1,4 @@
---Initial database file
---Prerana's code
-
--- Create CENTERDISEASE_CATEGORY table
-CREATE TABLE CENTERDISEASE_CATEGORY (
-    CenterID VARCHAR(50),
-    DCID VARCHAR(50),
-    PRIMARY KEY (CenterID, DCID)
-);
+-- Prerana's code
 
 -- Create DISEASE_CATEGORY table
 CREATE TABLE DISEASE_CATEGORY (
@@ -15,7 +7,7 @@ CREATE TABLE DISEASE_CATEGORY (
     DiseaseCategory VARCHAR(100)
 );
 
--- Create HEALTHCENTER table
+-- Create HEALTHCARE_CENTER table
 CREATE TABLE HEALTHCARE_CENTER (
     CenterID VARCHAR(50) PRIMARY KEY,
     Name VARCHAR(100),
@@ -27,6 +19,15 @@ CREATE TABLE HEALTHCARE_CENTER (
     OperatingHours VARCHAR(100),
     OverallRating DECIMAL(3, 2),
     CenterType VARCHAR(50)
+);
+
+-- Create CENTERDISEASE_CATEGORY table
+CREATE TABLE CENTERDISEASE_CATEGORY (
+    CenterID VARCHAR(50),
+    DCID VARCHAR(50),
+    PRIMARY KEY (CenterID, DCID),
+    CONSTRAINT FK_CDC_Center FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID),
+    CONSTRAINT FK_CDC_Disease FOREIGN KEY (DCID) REFERENCES DISEASE_CATEGORY(DCID)
 );
 
 -- Create DIAGNOSTIC_CENTER table
@@ -46,7 +47,6 @@ CREATE TABLE REHAB_CENTER (
     FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 );
 
-
 -- Create PHARMACY table
 CREATE TABLE PHARMACY (
     CenterID VARCHAR(50) PRIMARY KEY,
@@ -55,7 +55,6 @@ CREATE TABLE PHARMACY (
     HasMedicine BOOLEAN,
     FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 );
-
 
 -- Create HOSPITAL table
 CREATE TABLE HOSPITAL (
@@ -66,10 +65,6 @@ CREATE TABLE HOSPITAL (
     SpecializationType VARCHAR(100),
     FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 );
-
-  
-ALTER TABLE CENTERDISEASE_CATEGORY
-ADD CONSTRAINT FK_CDC_Disease FOREIGN KEY (DCID) REFERENCES DISEASE_CATEGORY(DCID);
 
 -- Create DOCTOR table
 CREATE TABLE DOCTOR (
@@ -88,14 +83,12 @@ CREATE TABLE AMBULANCE (
     CenterID VARCHAR(50),
     RegistrationNumber VARCHAR(50) PRIMARY KEY,
     DriverName VARCHAR(100),
+    DriverPhone VARCHAR(50),
     Type VARCHAR(50), -- Basic, ICU, Cardiac
     IsAvailable BOOLEAN,
+   
     FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 );
-
-
-CREATE DATABASE IF NOT EXISTS hospital_db;
-USE hospital_db;
 
 -- ================= PROFILES =================
 CREATE TABLE PROFILE (
@@ -136,8 +129,9 @@ CREATE TABLE EMERGENCY_CONTACT (
 CREATE TABLE DATA_MANAGER (
     ManagerID INT PRIMARY KEY,
     UserID INT,
-    CenterID INT,
-    FOREIGN KEY (UserID) REFERENCES PROFILE(ProfileID)
+    CenterID VARCHAR(50),
+    FOREIGN KEY (UserID) REFERENCES PROFILE(ProfileID),
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 ) ENGINE=InnoDB;
 
 -- ================= PATIENT CONTACT LINK (M:N) =================
@@ -157,9 +151,11 @@ CREATE TABLE PATIENT_RECORD (
     DiagnosisNotes TEXT,
     TreatmentDetails TEXT,
     RecordDate DATE,
-    DoctorID INT,
-    CenterID INT,
-    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
+    DoctorID VARCHAR(50),
+    CenterID VARCHAR(50),
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID),
+    FOREIGN KEY (DoctorID) REFERENCES DOCTOR(DoctorID),
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 ) ENGINE=InnoDB;
 
 -- ================= ADMISSION HISTORY =================
@@ -169,42 +165,29 @@ CREATE TABLE ADMISSION_HISTORY (
     AdmissionDate DATE,
     DischargeDate DATE,
     Outcome VARCHAR(50),
-    CenterID INT,
-    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
+    CenterID VARCHAR(50),
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID),
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 ) ENGINE=InnoDB;
 
 
---maymuna's code
+-- Maymuna's code
 
 -- Create Bed table
 CREATE TABLE Bed (
     BedID INT PRIMARY KEY,
-    CenterID INT,
+    CenterID VARCHAR(50),
     BedType VARCHAR(50),
     BedName VARCHAR(50),
     IsAvailable BOOLEAN,
-    LastUpdate DATETIME);
-
-CREATE TABLE Feedback (
-    FeedbackID INT PRIMARY KEY,\
-    PatientID INT,
-    CenterID INT,
-    DoctorID INT,
-    HospitalRating INT,
-    DoctorRating INT,
-    EquipmentRating INT,
-    SubmittedAt DATETIME,
-    Comments TEXT,
-    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID),
-    FOREIGN KEY (DoctorID) REFERENCES doctor(DoctorID),
-    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID)
-
-    
+    LastUpdate DATETIME,
+    FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 );
 
+-- Create Alert table
 CREATE TABLE Alert (
     AlertID INT PRIMARY KEY,
-    CenterID INT,
+    CenterID VARCHAR(50),
     AlertType VARCHAR(50),
     Severity VARCHAR(20),
     Message TEXT,
@@ -213,69 +196,66 @@ CREATE TABLE Alert (
     FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 );
 
-
+-- Create Booking table
 CREATE TABLE Booking (
     BookingID INT PRIMARY KEY,
     PatientID INT,
-    CenterID INT,
-    DoctorID INT,
+    CenterID VARCHAR(50),
+    DoctorID VARCHAR(50),
     BookingStatus VARCHAR(50),
     BookingDate DATETIME,
     IsEmergency BOOLEAN,
     BookingType VARCHAR(50),
-
-    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID),
     FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID),
-    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID)
+    FOREIGN KEY (DoctorID) REFERENCES DOCTOR(DoctorID)
 );
 
-
+-- Create Appointment table
 CREATE TABLE Appointment (
     BookingID INT PRIMARY KEY,
     AppointmentDate DATE,
     TimeSlot VARCHAR(50),
-
     FOREIGN KEY (BookingID) REFERENCES Booking(BookingID)
 );
 
-
+-- Create Admission table
 CREATE TABLE Admission (
     BookingID INT PRIMARY KEY,
     BedID INT,
     AdmissionDate DATE,
     ExpectedStay INT,
-
     FOREIGN KEY (BookingID) REFERENCES Booking(BookingID),
     FOREIGN KEY (BedID) REFERENCES Bed(BedID)
 );
 
+-- Create Ambulance_Request table
 CREATE TABLE Ambulance_Request (
     RequestID INT PRIMARY KEY,
     PatientID INT,
-    AmbulanceID INT,
+    AmbulanceID VARCHAR(50),
     PickupLocation VARCHAR(255),
     RequestTime DATETIME,
     ArrivedAt DATETIME,
     Status VARCHAR(50),
-
-    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
-    FOREIGN KEY (AmbulanceID) REFERENCES Ambulance(AmbulanceID)
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID),
+    FOREIGN KEY (AmbulanceID) REFERENCES AMBULANCE(AmbulanceID)
 );
 
+-- Create Feedback table
 CREATE TABLE Feedback (
     FeedbackID INT PRIMARY KEY,
     BookingID INT,
     PatientID INT,
-    CenterID INT,
-    DoctorID INT,
+    CenterID VARCHAR(50),
+    DoctorID VARCHAR(50),
     HospitalRating INT,
     DoctorRating INT,
     EquipmentRating INT,
     SubmittedAt DATETIME,
     Comments TEXT,
-
     FOREIGN KEY (BookingID) REFERENCES Booking(BookingID),
-    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID),
     FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID),
-    FOREIGN KEY (DoctorID) REFERENCES Doctor(DoctorID)
+    FOREIGN KEY (DoctorID) REFERENCES DOCTOR(DoctorID)
 );
