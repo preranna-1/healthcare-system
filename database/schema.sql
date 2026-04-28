@@ -233,13 +233,13 @@ CREATE TABLE Admission (
 CREATE TABLE Ambulance_Request (
     RequestID INT PRIMARY KEY,
     PatientID INT,
-    AmbulanceID VARCHAR(50),
+    RegistrationNumber VARCHAR(50),
     PickupLocation VARCHAR(255),
     RequestTime DATETIME,
     ArrivedAt DATETIME,
     Status VARCHAR(50),
     FOREIGN KEY (PatientID) REFERENCES PATIENT(PatientID),
-    FOREIGN KEY (AmbulanceID) REFERENCES AMBULANCE(AmbulanceID)
+    FOREIGN KEY (RegistrationNumber VARCHAR(50)) REFERENCES AMBULANCE(RegistrationNumber VARCHAR(50))
 );
 
 -- Create Feedback table
