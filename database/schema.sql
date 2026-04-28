@@ -85,15 +85,11 @@ CREATE TABLE DOCTOR (
 
 -- Create AMBULANCE table
 CREATE TABLE AMBULANCE (
-    AmbulanceID VARCHAR(50) PRIMARY KEY,
     CenterID VARCHAR(50),
-    RegistrationNumber VARCHAR(50),
+    RegistrationNumber VARCHAR(50) PRIMARY KEY,
     DriverName VARCHAR(100),
-    DriverPhone VARCHAR(50),
     Type VARCHAR(50), -- Basic, ICU, Cardiac
     IsAvailable BOOLEAN,
-    CurrentLatitude DECIMAL(10, 8),
-    CurrentLongitude DECIMAL(11, 8),
     FOREIGN KEY (CenterID) REFERENCES HEALTHCARE_CENTER(CenterID)
 );
 
